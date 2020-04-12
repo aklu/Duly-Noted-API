@@ -1,0 +1,14 @@
+"Mutations have side effects, such as mutating data or triggering a task"
+type Mutation {
+  "A test mutation that returns whatever string you send it"
+  echo(
+      "Any string"
+      str: String
+  ): String
+}
+
+"Queries return all requested data, without any side effects"
+type Query {
+  "A test query"
+  ping: String!
+}
