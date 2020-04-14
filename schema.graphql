@@ -19,7 +19,10 @@ type Query {
     ): Note
 
   "Get all notes"
-  notes: [Note]
+  notes(
+    "The archive state for the notes"
+    isArchived: Boolean
+  ): [Note]
 }
 
 "A note" 
