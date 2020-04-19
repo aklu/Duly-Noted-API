@@ -34,7 +34,7 @@ export default {
       const { id, note } = args;
 
       const noteUpdate = savedNotes.find((savedNote) => savedNote.id === id);
-      if (!noteToUpdate) {
+      if (!noteUpdate) {
         throw new Error('The id for this note could not be found');
       }
 
@@ -78,12 +78,12 @@ export default {
       return savedNoted.find((note) => note.id === args.id);
     },
     notes(_, args) {
-      const { includeArchive } = args;
-      if(includeArchive){
+      const { includeArchived } = args;
+      if(includeArchived){
         return savedNotes;
       }
       
-      return savedNotes.Notes.filter((note) => !note.isArchived);
+      return savedNotes.filter((note) => !note.isArchived);
     }
   }
 };

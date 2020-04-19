@@ -21,7 +21,7 @@ type Query {
   "Get all notes"
   notes(
     "The archive state for the notes"
-    isArchived: Boolean
+    includeArchived: Boolean
   ): [Note]
 }
 
