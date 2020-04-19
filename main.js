@@ -5,7 +5,7 @@ const schema = importAsString("./schema.graphql");
 
 const { ApolloServer } = Apollo;
 
-const server = new ApolloServer ({
+const server = new ApolloServer({
     resolvers,
     typeDefs: schema
 });

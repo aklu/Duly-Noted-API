@@ -31,69 +31,59 @@ export default {
       return newNote;
     },
     updateNote(_, args) {
-      const { note } = args;
+      const { id, note } = args;
+
+      const noteUpdate = savedNotes.find((savedNote) => savedNote.id === id);
+      if (!noteToUpdate) {
+        throw new Error('The id for this note could not be found');
+      }
 
       const updateNote = { ...note };
 
-      if (args.id !== note.id) {
-        throw new Error('The id for this note did not match any id in the database');
-      }
-
-      if (args.note.isArchived === "boolean")  {
-        updateNote.isArchived = args.note.isArchived;
+      if (typeof updateNote.isArchived === "boolean" || typeof updateNote.text === "string")  {
         const now = new Date();
         updateNote.updatedAt = now.toISOString();      
       }
-
-      if (args.note.isArchived !== "boolean")  {
-     }
-
-      if (typeof args.note.text === String) {
-        updateNote.text = args.note.text;
-        now = new Date();
-        updateNote.updatedAt = now.toISOString();    
+      else {
+        return noteUpdate;
       }
 
-      if (typeof args.note.text !== String) {
-      }
-
-      savedNotes.find((note) => {
-        if(note.id === args.id){
-          note.isArchived = updateNote.isArchived;
-          note.text = updateNote.text;
-          note.updateAt = updateNote.updateAt;
+      let updatedNote;
+      for (const savedNote of savedNotes) {
+        if (savedNote.id === id) {
+          Object.assign(savedNote, updateNote);
+          updatedNote = savedNote;
+          break;
         }
-      });
+      }
 
-      return updateNote;
+      return updatedNote;
     },
     deleteNote(_, args){
-      const { note } = args;
+      const { id } = args;
 
-      const deleteNote = { ...note };
-
-      if (args.id !== deleteNote.id) {
-        throw new Error('The id for this note did not match any id in the database');
+      const noteIndex = savedNotes.findIndex((savedNote) => savedNote.id === id);
+      
+      if (noteIndex < 0) {
+        throw new Error("The id for this note could not be found");
       }
 
-      const deletedNotes = notes.filter((note) => note.id !== deleteNote.id);
-      savedNotes = deletedNotes;
+      const [removedNote] = savedNotes.splice(noteIndex, 1);
 
-      return deleteNote;
+      return removedNote;
     }
   },
   Query: {
     note(_, args) {
       return savedNoted.find((note) => note.id === args.id);
     },
-    notes() {
-      if(isArchived !== "boolean" || isArchived === false){
-        savedNotes = notes.filter((note) => note.isArchived !== true);
+    notes(_, args) {
+      const { includeArchive } = args;
+      if(includeArchive){
+        return savedNotes;
       }
-      if (showArchive) {
-        savedNotes;
-      }
-      return savedNotes;
+      
+      return savedNotes.Notes.filter((note) => !note.isArchived);
     }
   }
 };

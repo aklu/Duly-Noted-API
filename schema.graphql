@@ -15,7 +15,7 @@ type Query {
   "Get one note by ID"
   note(
     "The ID of the note you want data for"
-    id: ID
+    id: ID!
     ): Note
 
   "Get all notes"
