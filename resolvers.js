@@ -1,8 +1,11 @@
 import cuid from "cuid";
+import { getNotes }  from "./notes.js";
+import { saveNotes } from "./notes.js";
 
-const savedNotes = [];
+let notes = getNotes();
 
 export default {
+
   Mutation: {
     createNote(_, args) {
       const { note } = args;
@@ -27,13 +30,13 @@ export default {
         newNote.isArchived = false;
       }
 
-      savedNotes.push(newNote);
+      saveNotes(newNote);
       return newNote;
     },
     updateNote(_, args) {
       const { id, note } = args;
 
-      const noteUpdate = savedNotes.find((savedNote) => savedNote.id === id);
+      const noteUpdate = notes.find((n) => n.id === id);
       if (!noteUpdate) {
         throw new Error('The id for this note could not be found');
       }
@@ -49,41 +52,45 @@ export default {
       }
 
       let updatedNote;
-      for (const savedNote of savedNotes) {
-        if (savedNote.id === id) {
-          Object.assign(savedNote, updateNote);
-          updatedNote = savedNote;
+      for (const notes of notes) {
+        if (notes.id === id) {
+          Object.assign(notes, updateNote);
+          updatedNote = notes;
           break;
         }
       }
 
+      saveNotes(notes);
       return updatedNote;
     },
     deleteNote(_, args){
       const { id } = args;
 
-      const noteIndex = savedNotes.findIndex((savedNote) => savedNote.id === id);
+      const noteIndex = notes.findIndex((n) => n.id === id);
       
       if (noteIndex < 0) {
         throw new Error("The id for this note could not be found");
       }
 
-      const [removedNote] = savedNotes.splice(noteIndex, 1);
+      const [removedNote] = notes.splice(noteIndex, 1);
 
+      saveNotes(notes);
       return removedNote;
     }
   },
   Query: {
     note(_, args) {
-      return savedNoted.find((note) => note.id === args.id);
+
+      return notes.find((n) => n.id === args.id);
     },
     notes(_, args) {
+
       const { includeArchived } = args;
       if(includeArchived){
-        return savedNotes;
+        return notes;
       }
       
-      return savedNotes.filter((note) => !note.isArchived);
+      return notes.filter((n) => !n.isArchived);
     }
   }
 };
