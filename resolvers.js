@@ -2,7 +2,6 @@ import cuid from "cuid";
 import { getNotes }  from "./notes.js";
 import { saveNotes } from "./notes.js";
 
-let notes = getNotes();
 
 export default {
 
@@ -36,6 +35,9 @@ export default {
     updateNote(_, args) {
       const { id, note } = args;
 
+      let notes = [];
+      notes = getNotes();
+
       const noteUpdate = notes.find((n) => n.id === id);
       if (!noteUpdate) {
         throw new Error('The id for this note could not be found');
@@ -66,6 +68,9 @@ export default {
     deleteNote(_, args){
       const { id } = args;
 
+      let notes = [];
+      notes = getNotes();
+
       const noteIndex = notes.findIndex((n) => n.id === id);
       
       if (noteIndex < 0) {
@@ -80,10 +85,14 @@ export default {
   },
   Query: {
     note(_, args) {
+      let notes = [];
+      notes = getNotes();
 
       return notes.find((n) => n.id === args.id);
     },
     notes(_, args) {
+      let notes = [];
+      notes = getNotes();
 
       const { includeArchived } = args;
       if(includeArchived){
