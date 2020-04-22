@@ -6,7 +6,9 @@ import { saveNotes } from "./notes.js";
 export default {
 
   Mutation: {
-    createNote(_, args) {
+    async createNote(_, args) {
+      const savedNotes = await getNotes();
+
       const { note } = args;
 
       const newNote = { ...note };
@@ -29,16 +31,17 @@ export default {
         newNote.isArchived = false;
       }
 
-      saveNotes(newNote);
+      savedNotes.push(newNote);
+
+      await saveNotes(savedNotes);
       return newNote;
     },
-    updateNote(_, args) {
+    async updateNote(_, args) {
       const { id, note } = args;
 
-      let notes = [];
-      notes = getNotes();
+      const savedNotes = await getNotes();
 
-      const noteUpdate = notes.find((n) => n.id === id);
+      const noteUpdate = savedNotes.find((n) => n.id === id);
       if (!noteUpdate) {
         throw new Error('The id for this note could not be found');
       }
@@ -54,52 +57,51 @@ export default {
       }
 
       let updatedNote;
-      for (const notes of notes) {
-        if (notes.id === id) {
-          Object.assign(notes, updateNote);
-          updatedNote = notes;
+      for (const savedNote of savedNotes) {
+        if (savedNote.id === id) {
+          Object.assign(savedNote, updateNote);
+          updatedNote = savedNote;
           break;
         }
       }
 
-      saveNotes(notes);
+      savedNotes.push(updatedNote);
+
+      await saveNotes(savedNotes);
       return updatedNote;
     },
-    deleteNote(_, args){
+    async deleteNote(_, args){
+      let savedNotes = await getNotes();
+
       const { id } = args;
 
-      let notes = [];
-      notes = getNotes();
-
-      const noteIndex = notes.findIndex((n) => n.id === id);
+      const noteIndex = savedNotes.findIndex((n) => n.id === id);
       
       if (noteIndex < 0) {
         throw new Error("The id for this note could not be found");
       }
 
-      const [removedNote] = notes.splice(noteIndex, 1);
+      const [removedNote] = savedNotes.splice(noteIndex, 1);
 
-      saveNotes(notes);
+      await saveNotes(savedNotes);
       return removedNote;
     }
   },
   Query: {
-    note(_, args) {
-      let notes = [];
-      notes = getNotes();
+    async note(_, args) {
+      const savedNotes = await getNotes();
 
-      return notes.find((n) => n.id === args.id);
+      return savedNotes.find((n) => n.id === args.id);
     },
-    notes(_, args) {
-      let notes = [];
-      notes = getNotes();
+    async notes(_, args) {
+      const savedNotes = await getNotes();
 
       const { includeArchived } = args;
       if(includeArchived){
-        return notes;
+        return savedNotes;
       }
       
-      return notes.filter((n) => !n.isArchived);
+      return savedNotes.filter((n) => !n.isArchived);
     }
   }
 };
