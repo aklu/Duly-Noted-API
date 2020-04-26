@@ -65,8 +65,6 @@ export default {
         }
       }
 
-      savedNotes.push(updatedNote);
-
       await saveNotes(savedNotes);
       return updatedNote;
     },
