@@ -10,6 +10,6 @@ const server = new ApolloServer({
     typeDefs: schema
 });
 
-server.listen({ port: 3030 }).then((result) => {
+server.listen({ port: 80 }).then((result) => {
     console.log(`Server listening at ${result.url}`);
 });
