@@ -4,7 +4,7 @@ export async function saveNotes(notes) {
     if (!Array.isArray(notes)) {
         throw new Error("notes argument must be an array");
       }
-    await fs.writeFile("./data.json", JSON.stringify(notes));
+    await fs.writeFile("./data.json", JSON.stringify(notes, null, " "));
 }
 
 export async function getNotes(){ 
